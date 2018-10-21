@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Hexo</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2018-10-21T12:24:56.179Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>John Doe</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="http://yoursite.com/2018/10/21/hello-world/"/>
+    <id>http://yoursite.com/2018/10/21/hello-world/</id>
+    <published>2018-10-21T12:24:56.179Z</published>
+    <updated>2018-10-21T12:24:56.179Z</updated>
+    
+    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="http://yoursite.com/2016/05/02/XMPP/"/>
+    <id>http://yoursite.com/2016/05/02/XMPP/</id>
+    <published>2016-05-01T16:00:00.000Z</published>
+    <updated>2018-10-21T12:24:56.179Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="UITableView的优化"><a href="#UITableView的优化" class="headerlink" title="UITableView的优化"></a>UITableView的优化</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</span><br></pre></td></tr></table></figure><p>这个代理方法的实现，在可见的页面是会重复绘制页面的，所以绝大部分人都会在这里做一些代码处理<br>比如：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">static NSString *CellIdentifier = @&quot;CellID&quot;;</span><br><span class="line">UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];</span><br></pre></td></tr></table></figure><p>以上举例代码是可以让cell被重复使用，一般大概只会在可见页面部分的几个cell会被new下，其他的全部重复使用前面已经有的cell对象，到时候只要填充数据就可以了</p><p>那么仅仅只是如此，恐怕现在的cell自定义的页面不只是文本那么简单，多多少少都会带有一些图片吧，当你下滑时候是否发现有那么一点点的卡顿现成，特别是网络不好，而且还是在iPhone4上跑的就会更明显了</p><p>那么在cell里面异步加载图片是个程序员都会想到，但是如果你给每个循环对象都加上异步加载，并且下滑的时候，这一操作将会被执行，虽然是异步，但是一个app里面的线程过多也会卡顿的，特别是在下滑操作的时候给每个图片进行异步加载</p><p>那么这里可以利用UIScrollViewDelegate代理很好的解决这问题:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate</span><br><span class="line">- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView</span><br></pre></td></tr></table></figure><p>可以识别tableview禁止或者减速滑动结束的时候进行异步加载图片</p><p>以下方法来执行异步加载操作</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//获取可见部分的对象</span><br><span class="line"> NSArray *visiblePaths = [self.tableView indexPathsForVisibleRows];</span><br><span class="line">  for (NSIndexPath *indexPath in visiblePaths)</span><br><span class="line">  &#123;</span><br><span class="line">     //获取的dataSource里面的对象，并且判断加载完成的不需要再次异步加载</span><br><span class="line">       &lt;code&gt;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><p>同时在cell绘制中也做限制</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</span><br><span class="line">if (self.tableView.dragging == NO &amp;&amp; self.tableView.decelerating == NO)</span><br><span class="line">            &#123;</span><br><span class="line">               //开始异步加载图片</span><br><span class="line">                &lt;code&gt;</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure><p>如果tableview 停止滑动的时候开始异步加载图片</p><p>最后也别忘记在内存紧张的情况下释放调所有的异步线程，以保证的你的app不会被系统强制关闭</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- (void)didReceiveMemoryWarning&#123;</span><br><span class="line">//  释放调异步加载图片的线程以及所有图片资源对象</span><br><span class="line">&lt;code&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>还有千万别忘记销毁的时候手动把所有的使用到的代理设置nil<br>至此性能优化结束，来源于官方文案</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;UITableView的优化&quot;&gt;&lt;a href=&quot;#UITableView的优化&quot; class=&quot;headerlink&quot; title=&quot;UITableView的优化&quot;&gt;&lt;/a&gt;UITableView的优化&lt;/h1&gt;&lt;figure class=&quot;highlight 
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="http://yoursite.com/2016/03/26/XMPP/"/>
+    <id>http://yoursite.com/2016/03/26/XMPP/</id>
+    <published>2016-03-25T16:00:00.000Z</published>
+    <updated>2018-10-21T12:24:56.178Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="UISearchBar的代理方法"><a href="#UISearchBar的代理方法" class="headerlink" title="UISearchBar的代理方法"></a>UISearchBar的代理方法</h1><h3 id="UISearchBar"><a href="#UISearchBar" class="headerlink" title="UISearchBar"></a>UISearchBar</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar;                      </span><br><span class="line">//变成第一响应者</span><br><span class="line"></span><br><span class="line">- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar; </span><br><span class="line">// 开始编辑</span><br><span class="line"></span><br><span class="line">- (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar;                       </span><br><span class="line">//解除第一响应者</span><br><span class="line"></span><br><span class="line">- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar;                       </span><br><span class="line">//结束编辑</span><br><span class="line"></span><br><span class="line">- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText;   </span><br><span class="line">//文本改变,包括清空</span><br><span class="line"></span><br><span class="line">- (BOOL)searchBar:(UISearchBar *)searchBar shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text NS_AVAILABLE_IOS(3_0); </span><br><span class="line">// 文本即将改变</span><br><span class="line"></span><br><span class="line">- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar;                    </span><br><span class="line">// 当键盘按钮被点击的时候调用</span><br><span class="line"></span><br><span class="line">- (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar __TVOS_PROHIBITED;</span><br><span class="line"> // called when bookmark button pressed</span><br><span class="line"> // 当键盘按钮被点击的时候调用</span><br><span class="line"></span><br><span class="line">- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar __TVOS_PROHIBITED;  </span><br><span class="line">//当取消按钮被点击的时候调用</span><br><span class="line">// called when cancel button pressed</span><br><span class="line"></span><br><span class="line">- (void)searchBarResultsListButtonClicked:(UISearchBar *)searchBar NS_AVAILABLE_IOS(3_2) __TVOS_PROHIBITED;</span><br><span class="line">// 当点击搜索的时候调用</span><br><span class="line">// called when search results button pressed</span><br><span class="line"></span><br><span class="line">- (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope NS_AVAILABLE_IOS(3_0);</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;UISearchBar的代理方法&quot;&gt;&lt;a href=&quot;#UISearchBar的代理方法&quot; class=&quot;headerlink&quot; title=&quot;UISearchBar的代理方法&quot;&gt;&lt;/a&gt;UISearchBar的代理方法&lt;/h1&gt;&lt;h3 id=&quot;UISearchB
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="http://yoursite.com/2015/11/10/XMPP/"/>
+    <id>http://yoursite.com/2015/11/10/XMPP/</id>
+    <published>2015-11-09T16:00:00.000Z</published>
+    <updated>2018-10-21T12:24:56.178Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="谓词"><a href="#谓词" class="headerlink" title="谓词"></a>谓词</h1><h2 id="一，谓词语法介绍："><a href="#一，谓词语法介绍：" class="headerlink" title="一，谓词语法介绍："></a>一，谓词语法介绍：</h2><p>1，比较运算符：</p><ul><li>>: 大于</li><li>&lt;:小于</li><li>>=:大于等于</li><li>&lt;=:小于等于</li><li>=,==:等于</li><li>!=,&lt;&gt;:不等于</li><li>between:左边的表达式等于右边的表达式的值或者介于它们之间。右边是一个有两个指定上限和下限的数值的数列（指定顺序的数列）。比如，1 BETWEEN { 0 , 33 }，或者INPUT BETWEEN {INPUT BETWEEN {LOWER, $UPPER }</li><li>CONTAINS:包含,CONTAINS[c]不区分大小写</li></ul><h4 id="例子：年龄属性大于3岁-注意：键路径不能用单引号引起来，否则会报错"><a href="#例子：年龄属性大于3岁-注意：键路径不能用单引号引起来，否则会报错" class="headerlink" title="例子：年龄属性大于3岁,注意：键路径不能用单引号引起来，否则会报错"></a>例子：年龄属性大于3岁,注意：键路径不能用单引号引起来，否则会报错</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NSPredicate *predicate = [NSPredicate predicateWithFormat:@&quot;age &gt; 3&quot;];</span><br></pre></td></tr></table></figure><h2 id="二，逻辑运算符："><a href="#二，逻辑运算符：" class="headerlink" title="二，逻辑运算符："></a>二，逻辑运算符：</h2><p>逻辑运算符:</p><ul><li>and / &amp;&amp;:与</li><li>or:或</li><li>not / !:非</li></ul><h6 id="例子：年龄大于三岁或名字叫“zhang1”的，注意：字符串的值需要用单引号引起来，否则会报错，错误信息是：this-class-is-not-key-value-coding-compliant-for-the-key-zhang1"><a href="#例子：年龄大于三岁或名字叫“zhang1”的，注意：字符串的值需要用单引号引起来，否则会报错，错误信息是：this-class-is-not-key-value-coding-compliant-for-the-key-zhang1" class="headerlink" title="例子：年龄大于三岁或名字叫“zhang1”的，注意：字符串的值需要用单引号引起来，否则会报错，错误信息是：this class is not key value coding-compliant for the key zhang1."></a>例子：年龄大于三岁或名字叫“zhang1”的，注意：字符串的值需要用单引号引起来，否则会报错，错误信息是：this class is not key value coding-compliant for the key zhang1.</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NSPredicate *predicate = [NSPredicate predicateWithFormat:@&quot;age &gt; 3 || name = &apos;zhang1&apos;&quot;];</span><br></pre></td></tr></table></figure><h3 id="OC中谓词的简单使用"><a href="#OC中谓词的简单使用" class="headerlink" title="OC中谓词的简单使用"></a>OC中谓词的简单使用</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 1.创建谓词</span><br><span class="line">NSPredicate *cate = [NSPredicate predicateWithFormat:@&quot;age CONTAINS[c] 23 || &quot;];</span><br><span class="line">// 2.获取数据</span><br><span class="line">NSArray *arr;</span><br><span class="line">// 3.过滤数据</span><br><span class="line">NSArray *cateArray = [arr filteredArrayUsingPredicate:cate];</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;谓词&quot;&gt;&lt;a href=&quot;#谓词&quot; class=&quot;headerlink&quot; title=&quot;谓词&quot;&gt;&lt;/a&gt;谓词&lt;/h1&gt;&lt;h2 id=&quot;一，谓词语法介绍：&quot;&gt;&lt;a href=&quot;#一，谓词语法介绍：&quot; class=&quot;headerlink&quot; title=&quot;一，谓词语法介
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="http://yoursite.com/2015/09/27/Czs/"/>
+    <id>http://yoursite.com/2015/09/27/Czs/</id>
+    <published>2015-09-26T16:00:00.000Z</published>
+    <updated>2018-10-21T12:24:56.178Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="SVN上传-a文件"><a href="#SVN上传-a文件" class="headerlink" title="SVN上传.a文件"></a>SVN上传.a文件</h1><p>由于SVN会自动忽略掉.a文件,在working space中找不到可以新添加的.a文件,导致工程运行不了.</p><h4 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法:"></a>解决方法:</h4><h3 id="1-打开终端-在命令行中输入-vi-subversion-config-来打开配置文件"><a href="#1-打开终端-在命令行中输入-vi-subversion-config-来打开配置文件" class="headerlink" title="1. 打开终端, 在命令行中输入: vi ~/.subversion/config 来打开配置文件."></a>1. 打开终端, 在命令行中输入: vi ~/.subversion/config 来打开配置文件.</h3><h3 id="2-然后-在-miscellany-项找到这个串"><a href="#2-然后-在-miscellany-项找到这个串" class="headerlink" title="2. 然后, 在[miscellany]项找到这个串:"></a>2. 然后, 在[miscellany]项找到这个串:</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># global-ignores = *.o *.lo *.la *.al .libs *.so *.so.[0-9]* *.a *.pyc *.pyo</span><br><span class="line">#   *.rej *~ #*# .#* .*.swp .DS_Store</span><br></pre></td></tr></table></figure><h3 id="3-修改成"><a href="#3-修改成" class="headerlink" title="3.修改成"></a>3.修改成</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">global-ignores = *.o *.lo *.la *.al .libs *.so *.so.[0-9]*  *.pyc *.pyo *.rej *~ #*# .#* .*.swp .DS_Store</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;SVN上传-a文件&quot;&gt;&lt;a href=&quot;#SVN上传-a文件&quot; class=&quot;headerlink&quot; title=&quot;SVN上传.a文件&quot;&gt;&lt;/a&gt;SVN上传.a文件&lt;/h1&gt;&lt;p&gt;由于SVN会自动忽略掉.a文件,在working space中找不到可以新添加的.a
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="http://yoursite.com/2015/09/15/Czs/"/>
+    <id>http://yoursite.com/2015/09/15/Czs/</id>
+    <published>2015-09-14T16:00:00.000Z</published>
+    <updated>2018-10-21T12:24:56.178Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="常用的第三方框架-JSONKit"><a href="#常用的第三方框架-JSONKit" class="headerlink" title="常用的第三方框架-JSONKit"></a>常用的第三方框架-JSONKit</h1><h1 id="常用的第三方框架"><a href="#常用的第三方框架" class="headerlink" title="常用的第三方框架"></a>常用的第三方框架</h1><h2 id="JSONKit"><a href="#JSONKit" class="headerlink" title="JSONKit"></a>JSONKit</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jsonKit是 Javascript 的子集，专门负责描述数据格式</span><br></pre></td></tr></table></figure><h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><ol><li><p>下载框架 <a href="https://github.com/johnezang/JSONKit" target="_blank" rel="noopener">https://github.com/johnezang/JSONKit</a></p></li><li><p>导入框架文件</p><ul><li>JSONKit.h</li><li>JSONKit.m</li></ul></li><li><p>设置 MRC 标记</p><ul><li><p>选择”项目”－”Build Phases”－”Compile Sources”</p></li><li><p>找到 JSONKit.m 并且在 Compiler Flags 中添加</p></li></ul></li></ol><pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-fno-objc-arc</span><br></pre></td></tr></table></figure>- 可以告诉编译器，编译 JSONKit.m 时不使用 ARC</code></pre><ol start="4"><li><p>修改错误</p><ul><li>利用自动修复功能，修改两处 isa 的错误</li></ul></li><li><p>反序列化</p></li></ol><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id result = [[JSONDecoder decoder] objectWithData:data];</span><br></pre></td></tr></table></figure><h3 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">static int largeNumber = 100 * 1000;</span><br><span class="line"></span><br><span class="line">- (void)jsonKitDemo &#123;</span><br><span class="line">    NSString *urlString = @&quot;http://localhost/demo.json&quot;;</span><br><span class="line">    urlString = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];</span><br><span class="line">    NSURL *url = [NSURL URLWithString:urlString];</span><br><span class="line">    NSURLRequest *request = [NSURLRequest requestWithURL:url];</span><br><span class="line"></span><br><span class="line">    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) &#123;</span><br><span class="line"></span><br><span class="line">        NSLog(@&quot;start&quot;);</span><br><span class="line">        CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();</span><br><span class="line">        for (int i = 0; i &lt; largeNumber; ++i) &#123;</span><br><span class="line">            id result = [[JSONDecoder decoder] objectWithData:data];</span><br><span class="line">        &#125;</span><br><span class="line">        NSLog(@&quot;%f&quot;, CFAbsoluteTimeGetCurrent() - start);</span><br><span class="line"></span><br><span class="line">        // 数据处理代码...</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>测试结果：</p><ul><li>时间：3.24s</li><li>内存：4.74G</li></ul><p>苹果原生框架</p><ul><li>时间：0.18s</li><li>内存：几乎不变</li></ul><blockquote><p>重要提示：如果仍然还在使用老的框架解析 <code>JSON</code>，可以直接替换成苹果原生的解析</p></blockquote>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;常用的第三方框架-JSONKit&quot;&gt;&lt;a href=&quot;#常用的第三方框架-JSONKit&quot; class=&quot;headerlink&quot; title=&quot;常用的第三方框架-JSONKit&quot;&gt;&lt;/a&gt;常用的第三方框架-JSONKit&lt;/h1&gt;&lt;h1 id=&quot;常用的第三方框架&quot;
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="http://yoursite.com/2015/06/07/Czs/"/>
+    <id>http://yoursite.com/2015/06/07/Czs/</id>
+    <published>2015-06-06T16:00:00.000Z</published>
+    <updated>2018-10-21T12:24:56.177Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="关于XMPP的一些问题"><a href="#关于XMPP的一些问题" class="headerlink" title="关于XMPP的一些问题"></a>关于XMPP的一些问题</h1><h1 id="XMPP"><a href="#XMPP" class="headerlink" title="XMPP"></a>XMPP</h1><h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述:"></a>问题描述:</h4><p>OpenFire启动失败(OPenFire4.0版本出现的Bug,不能直接启动)</p><h4 id="解决-用终端启动OpenFire"><a href="#解决-用终端启动OpenFire" class="headerlink" title="解决:用终端启动OpenFire"></a>解决:用终端启动OpenFire</h4><h6 id="1，命令行启动openfire"><a href="#1，命令行启动openfire" class="headerlink" title="1，命令行启动openfire:"></a>1，命令行启动openfire:</h6><p>①：sudo chmod -R 777 /usr/local/openfire/bin<br>②：sudo su<br>③：cd /usr/local/openfire/bin<br>④：export JAVA_HOME=<code>/usr/libexec/java_home</code><br>⑤：echo $JAVA_HOME /Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home<br>⑥: cd /usr/local/openfire/bin<br>⑦: ./openfire.sh</p><h6 id="2，命令行停止openfire："><a href="#2，命令行停止openfire：" class="headerlink" title="2，命令行停止openfire："></a>2，命令行停止openfire：</h6><h4 id="问题描述-1"><a href="#问题描述-1" class="headerlink" title="问题描述"></a>问题描述</h4><p>3, 将XMPPFramework.h 拖入工程;</p><p>提示：如果在Xcode6，经过上述步骤之后，仍然不能编译成功！</p><p>原因在于：Xcode6已经取消了pch</p><h4 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h4><p>解决办法：找到core/xmpp.h<br>在行首添加 #import</p><p>exit;</p><p>Library Search Paths</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;关于XMPP的一些问题&quot;&gt;&lt;a href=&quot;#关于XMPP的一些问题&quot; class=&quot;headerlink&quot; title=&quot;关于XMPP的一些问题&quot;&gt;&lt;/a&gt;关于XMPP的一些问题&lt;/h1&gt;&lt;h1 id=&quot;XMPP&quot;&gt;&lt;a href=&quot;#XMPP&quot; class=&quot;
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="http://yoursite.com/2015/04/07/Czs/"/>
+    <id>http://yoursite.com/2015/04/07/Czs/</id>
+    <published>2015-04-06T16:00:00.000Z</published>
+    <updated>2018-10-21T12:24:56.177Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="使用-Jekyll-和-GitHub-Pages-搭建博客"><a href="#使用-Jekyll-和-GitHub-Pages-搭建博客" class="headerlink" title="使用 Jekyll 和 GitHub Pages 搭建博客"></a>使用 Jekyll 和 GitHub Pages 搭建博客</h1><h3 id="1-注册-GitHub-账号并生成-SSH-Keys"><a href="#1-注册-GitHub-账号并生成-SSH-Keys" class="headerlink" title="1. 注册 GitHub 账号并生成 SSH Keys"></a>1. 注册 GitHub 账号并生成 SSH Keys</h3><hr><p><a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>目前拥有140多万开发者用户，号称程序员的Facebook，具有极高的人气，许多重要的项目都托管在上面。</p><p>注册一个 GitHub 账号，可以和世界优秀的程序员零距离接触，相信在不远的将来，我也会成为一名优秀的程序员，:P</p><p>注册账号之后，为了方便使用，建议在本地生成一个 SSH Key，具体操作步骤可以访问 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="noopener">https://help.github.com/articles/generating-ssh-keys/</a>。</p><h3 id="2-为博客项目创建代码库并-clone-到本地"><a href="#2-为博客项目创建代码库并-clone-到本地" class="headerlink" title="2. 为博客项目创建代码库并 clone 到本地"></a>2. 为博客项目创建代码库并 clone 到本地</h3><hr><ul><li><p>选择 Repositories，然后点击 New，创建一个代码库，代码库的名称是：[username].github.io</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">提示：[username]，是注册的 GitHub 用户名</span><br></pre></td></tr></table></figure></li><li><p>在终端中将新建的代码库 clone 到本地</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git clone https://github.com/[username]/[username].github.io.git</span><br></pre></td></tr></table></figure></li></ul><h3 id="3-安装相关软件"><a href="#3-安装相关软件" class="headerlink" title="3. 安装相关软件"></a>3. 安装相关软件</h3><hr><p>本环节的步骤只需执行一次即可：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> gem install jekyll</span><br><span class="line"><span class="meta">$</span> jekyll new [username].github.io.git</span><br><span class="line"><span class="meta">$</span> cd [username].github.io.git</span><br></pre></td></tr></table></figure><h3 id="4-选择并安装-Jekyll-模版"><a href="#4-选择并安装-Jekyll-模版" class="headerlink" title="4. 选择并安装 Jekyll 模版"></a>4. 选择并安装 Jekyll 模版</h3><hr><p>在 GitHub 中搜索 jekyll theme 然后选择一款喜欢的模板，下载到本地并且解压缩到自己的博客目录中。</p><p>按照模板中的时候说明进行相应的配置，通常需要编辑一下 _config.yml 文件，设置自己博客的标题以及其他相关信息。</p><h3 id="5-编写博文-amp-测试"><a href="#5-编写博文-amp-测试" class="headerlink" title="5. 编写博文 &amp; 测试"></a>5. 编写博文 &amp; 测试</h3><hr><p>在 _posts 目录中，新建一个文件，文件名格式如下</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span>touch yyyy-MM-dd-topic-name.md</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">提示：topic-name中不要有中文、大写字符以及空格，如果有多个单词可以使用 “-“ 连接。</span><br></pre></td></tr></table></figure><p>使用一款熟悉的文本编辑器打开这个 .md 文件，撰写博客内容即可。</p><p>文章头部的格式如下：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">layout: post</span><br><span class="line">title: 博文主题</span><br><span class="line">---</span><br></pre></td></tr></table></figure><p>当然啦，在编写博客的时候测试，测试是必不可少的。打开终端中，进入本地博客代码库的主目录，然后输入：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> jekyll serve</span><br></pre></td></tr></table></figure><p>接着打开浏览器，在地址栏中输入</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:4000</span><br></pre></td></tr></table></figure><p>就可以边写便刷新，查看博客的最终效果了，:P</p><p>关于内容格式的方面，分享几个实用的技巧：</p><ul><li>行首使用 # 表示标题1</li><li>行首使用 ## 表示标题2，依次类推……</li><li>行首使用 * 表示项目列表</li><li>行首使用 &gt; 表示引用文字</li><li>如果需要插入代码<ul><li>三个连续的 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  - 粘贴代码块</span><br><span class="line">  - 三个连续的 ``` 回车(代码段结束)</span><br><span class="line"></span><br><span class="line">怎么样？感觉还不错吧，哈哈！</span><br><span class="line"></span><br><span class="line">### 6. 提交博文</span><br><span class="line"></span><br><span class="line">在终端中输入：</span><br></pre></td></tr></table></figure></li></ul></li></ul><p>$ git add .<br>$ git commit -a -m “新建文章”<br>$ git push<br><code>`</code></p><blockquote><p>如果是第一次提交，GitHub 大概需要 15 分钟左右生成博客，此后就可以通过 [username].github.io 访问新的博客了，:P</p></blockquote>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;使用-Jekyll-和-GitHub-Pages-搭建博客&quot;&gt;&lt;a href=&quot;#使用-Jekyll-和-GitHub-Pages-搭建博客&quot; class=&quot;headerlink&quot; title=&quot;使用 Jekyll 和 GitHub Pages 搭建博客&quot;&gt;&lt;/a
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="http://yoursite.com/2015/04/06/Czs/"/>
+    <id>http://yoursite.com/2015/04/06/Czs/</id>
+    <published>2015-04-05T16:00:00.000Z</published>
+    <updated>2018-10-21T12:24:56.177Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="mac-本地按安装-jekyll"><a href="#mac-本地按安装-jekyll" class="headerlink" title="mac 本地按安装 jekyll"></a>mac 本地按安装 jekyll</h1><p>本地安装 Jekyll 其实很简单的，继续做笔记。</p><p>如果你的本地已经安装了 gem ，那么你可以通过下面的方法来安装 jekyll , 在终端输入<br>：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem install jekyll</span><br></pre></td></tr></table></figure><p>如果你安装遇到问题，可能是本地 ruby 版本的原因，或者是 gem 没有升级。 安装 ruby 有很多方法：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//apt-get</span><br><span class="line">sudo apt-get install ruby1.8-dev</span><br><span class="line">//brew</span><br><span class="line">brew install ruby</span><br><span class="line">//macport</span><br><span class="line">port install ruby</span><br></pre></td></tr></table></figure><p>升级 gem :</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gem update --system</span><br></pre></td></tr></table></figure><p>Ok, 安装完 jekyll 之后，你还需要安装 RDiscount，为什么需要呢？因为在 RDiscount<br>里面包含有 markdown 语法的包。<br>安装如下：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gem install rdiscount</span><br></pre></td></tr></table></figure><p>– 完 –</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;mac-本地按安装-jekyll&quot;&gt;&lt;a href=&quot;#mac-本地按安装-jekyll&quot; class=&quot;headerlink&quot; title=&quot;mac 本地按安装 jekyll&quot;&gt;&lt;/a&gt;mac 本地按安装 jekyll&lt;/h1&gt;&lt;p&gt;本地安装 Jekyll 其实
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="http://yoursite.com/2015/03/21/Czs/"/>
+    <id>http://yoursite.com/2015/03/21/Czs/</id>
+    <published>2015-03-20T16:00:00.000Z</published>
+    <updated>2018-10-21T12:24:56.176Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Vim-常用命令总结"><a href="#Vim-常用命令总结" class="headerlink" title="Vim 常用命令总结"></a>Vim 常用命令总结</h1><p>使用 <strong>Vim</strong> 的时间不长 <strong>Vim</strong> 编辑模式了。 <strong>Vim</strong> 的学习曲线是非常陡的，一开始学习的时候，面对很多的操作命令要去记住，常常望而却步。</p><p>其实，只要记住一些常用的命令，加之在工作中坚持使用 <strong>Vim</strong> 进行编辑，很快就能得心应手了。</p><p>###光标移动(Cursor Movement)</p><table><thead><tr><th>命令</th><th>作用（解释）</th></tr></thead><tbody><tr><td><code>h,j,k,l</code></td><td><code>h</code>表示往左，<code>j</code>表示往下，<code>k</code>表示往右，<code>l</code>表示往上</td></tr><tr><td><code>Ctrl</code>+<code>f</code></td><td>上一页</td></tr><tr><td><code>Ctrl</code>+<code>b</code></td><td>下一页</td></tr><tr><td><code>w</code>, <code>e</code>, <code>W</code>, <code>E</code></td><td>跳到单词的后面，小写包括标点</td></tr><tr><td><code>b</code>, <code>B</code></td><td>以单词为单位往前跳动光标，小写包含标点</td></tr><tr><td><code>O</code></td><td>开启新的一行</td></tr><tr><td><code>^</code></td><td>一行的开始</td></tr><tr><td><code>$</code></td><td>一行的结尾</td></tr><tr><td><code>gg</code></td><td>文档的第一行</td></tr><tr><td><code>[N]G</code></td><td>文档的第N行或者最后一行</td></tr></tbody></table><p>###插入模式(Insert Mode)</p><table><thead><tr><th>命令</th><th>作用（解释)</th></tr></thead><tbody><tr><td><code>i</code></td><td>插入到光标前面</td></tr><tr><td><code>I</code></td><td>插入到行的开始位置</td></tr><tr><td><code>a</code></td><td>插入到光标的后面</td></tr><tr><td><code>A</code></td><td>插入到行的最后位置</td></tr><tr><td><code>o</code>, <code>O</code></td><td>新开一行</td></tr><tr><td><code>Esc</code></td><td>关闭插入模式</td></tr></tbody></table><p>###编辑(Editing)</p><table><thead><tr><th>命令</th><th>作用（解释）</th></tr></thead><tbody><tr><td><code>r</code></td><td>在插入模式替换光标所在的一个字符</td></tr><tr><td><code>J</code></td><td>合并下一行到上一行</td></tr><tr><td><code>s</code></td><td>删除光标所在的一个字符, 光标还在当行</td></tr><tr><td><code>S</code></td><td>删除光标所在的一行，光标还在当行，不同于<code>dd</code></td></tr><tr><td><code>u</code></td><td>撤销上一步操作</td></tr><tr><td><code>ctrl</code>+<code>r</code></td><td>恢复上一步操作</td></tr><tr><td><code>.</code></td><td>重复最后一个命令</td></tr><tr><td><code>~</code></td><td>变换为大写</td></tr><tr><td><code>[N]&gt;&gt;</code></td><td>一行或N行往右移动一个tab</td></tr><tr><td><code>[N]&lt;&lt;</code></td><td>一行或N行往左移动一个tab</td></tr></tbody></table><p>###关闭(Exiting)</p><table><thead><tr><th>命令</th><th>作用（解释)</th></tr></thead><tbody><tr><td><code>:w</code></td><td>保存</td></tr><tr><td><code>:wq</code>, <code>:x</code></td><td>保存并关闭</td></tr><tr><td><code>:q</code></td><td>关闭（已保存）</td></tr><tr><td><code>:q!</code></td><td>强制关闭</td></tr></tbody></table><p>###搜索(Search)</p><table><thead><tr><th>命令</th><th>作用（解释)</th></tr></thead><tbody><tr><td><code>/pattern</code></td><td>搜索（非插入模式)</td></tr><tr><td><code>?pattern</code></td><td>往后搜索</td></tr><tr><td><code>n</code></td><td>光标到达搜索结果的前一个目标</td></tr><tr><td><code>N</code></td><td>光标到达搜索结果的后一个目标</td></tr></tbody></table><p>###视觉模式(Visual Mode)</p><table><thead><tr><th>命令</th><th>作用（解释)</th></tr></thead><tbody><tr><td><code>v</code></td><td>选中一个或多个字符</td></tr><tr><td><code>V</code></td><td>选中一行</td></tr></tbody></table><p>###剪切和复制(Cut and Paste)</p><table><thead><tr><th>命令</th><th>作用（解释)</th></tr></thead><tbody><tr><td><code>dd</code></td><td>删除一行</td></tr><tr><td><code>dw</code></td><td>删除一个单词</td></tr><tr><td><code>x</code></td><td>删除后一个字符</td></tr><tr><td><code>X</code></td><td>删除前一个字符</td></tr><tr><td><code>D</code></td><td>删除一行最后一个字符</td></tr><tr><td><code>[N]yy</code></td><td>复制一行或者N行</td></tr><tr><td><code>yw</code></td><td>复制一个单词</td></tr><tr><td><code>p</code></td><td>粘贴</td></tr></tbody></table><p>###窗口操作</p><table><thead><tr><th>命令</th><th>作用（解释)</th></tr></thead><tbody><tr><td><code>:split</code></td><td>水平方向分割出一个窗口</td></tr><tr><td><code>:vsplit</code></td><td>垂直方向分割出一个窗口</td></tr><tr><td><code>:close</code></td><td>关闭窗口</td></tr><tr><td><code>Ctrl</code>+<code>W</code></td><td>切换窗口, <code>h</code>到左边窗口，<code>j</code>到下方窗口，<code>k</code>到上方窗口，<code>l</code>到右边窗口</td></tr></tbody></table>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;Vim-常用命令总结&quot;&gt;&lt;a href=&quot;#Vim-常用命令总结&quot; class=&quot;headerlink&quot; title=&quot;Vim 常用命令总结&quot;&gt;&lt;/a&gt;Vim 常用命令总结&lt;/h1&gt;&lt;p&gt;使用 &lt;strong&gt;Vim&lt;/strong&gt; 的时间不长 &lt;strong&gt;
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+</feed>
